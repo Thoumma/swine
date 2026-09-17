@@ -1,0 +1,1325 @@
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap">
+<title>Swine Seeker</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg:        #F4F6F9;
+    --card:      #FFFFFF;
+    --card-2:    #F9FAFB;
+    --bd:        #E6EAF0;
+    --bd-soft:   #EEF1F5;
+    --ink:       #111827;
+    --ink-2:     #6B7280;
+    --ink-3:     #9CA3AF;
+    --brand:     #2563EB;
+    --brand-wash:#EFF6FF;
+
+    --good:      #16A34A;  --good-ink: #15803D;  --good-wash: #ECFDF3;  --good-bd: #C4EED4;
+    --warn:      #F59E0B;  --warn-ink: #B45309;  --warn-wash: #FFFAEB;  --warn-bd: #FBE3A8;
+    --crit:      #DC2626;  --crit-ink: #B91C1C;  --crit-wash: #FEF3F2;  --crit-bd: #FBCFCB;
+    --off:       #9CA3AF;  --off-ink:  #6B7280;  --off-wash:  #F3F4F6;  --off-bd:  #E1E4E9;
+
+    --grid:      #EDF0F4;
+    --sh:        0 1px 2px rgba(16,24,40,.04);
+    --f: "Inter", "Noto Sans Lao", "Phetsarath OT", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0D1117; --card: #151B24; --card-2: #1A212B; --bd: #232B36; --bd-soft: #1E2530;
+      --ink: #E9EDF3; --ink-2: #9AA4B2; --ink-3: #6B7480;
+      --brand: #60A5FA; --brand-wash: #16243A;
+      --good: #34C77B; --good-ink: #6EDBA0; --good-wash: #10251C; --good-bd: #1D4435;
+      --warn: #F0B23C; --warn-ink: #F4C86C; --warn-wash: #271D0D; --warn-bd: #4A3717;
+      --crit: #F26D64; --crit-ink: #F79289; --crit-wash: #2A1513; --crit-bd: #4D2523;
+      --off:  #6B7480; --off-ink: #8A93A0; --off-wash: #1A212B; --off-bd: #2A323D;
+      --grid: #1F2732; --sh: 0 1px 2px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0D1117; --card: #151B24; --card-2: #1A212B; --bd: #232B36; --bd-soft: #1E2530;
+    --ink: #E9EDF3; --ink-2: #9AA4B2; --ink-3: #6B7480;
+    --brand: #60A5FA; --brand-wash: #16243A;
+    --good: #34C77B; --good-ink: #6EDBA0; --good-wash: #10251C; --good-bd: #1D4435;
+    --warn: #F0B23C; --warn-ink: #F4C86C; --warn-wash: #271D0D; --warn-bd: #4A3717;
+    --crit: #F26D64; --crit-ink: #F79289; --crit-wash: #2A1513; --crit-bd: #4D2523;
+    --off:  #6B7480; --off-ink: #8A93A0; --off-wash: #1A212B; --off-bd: #2A323D;
+    --grid: #1F2732; --sh: 0 1px 2px rgba(0,0,0,.3);
+  }
+
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--f); font-size: 14px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  *:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- top bar ---------- */
+  .bar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
+    background: var(--card); border-bottom: 1px solid var(--bd);
+    display: flex; align-items: center; gap: 22px;
+    padding: 0 20px; flex-wrap: wrap;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; padding: 11px 0; }
+  .logo .sq {
+    width: 33px; height: 33px; border-radius: 9px; background: var(--brand);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .logo b { display: block; font-size: 15px; font-weight: 700; letter-spacing: -.015em; line-height: 1.25; }
+  .logo span { display: block; font-size: 11.5px; color: var(--ink-2); line-height: 1.25; }
+  .tabs { display: flex; gap: 2px; align-self: stretch; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none }
+  .tab {
+    background: none; border: none; cursor: pointer; font-family: var(--f);
+    font-size: 13.5px; font-weight: 500; color: var(--ink-2);
+    padding: 0 14px; border-bottom: 2px solid transparent;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--brand); border-bottom-color: var(--brand); font-weight: 600; }
+  .tab { white-space: nowrap; flex-shrink: 0; }
+  .tab .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--crit); }
+  .barR { margin-left: auto; display: flex; align-items: center; gap: 16px; padding: 9px 0; }
+  .live {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--good-wash); border: 1px solid var(--good-bd); color: var(--good-ink);
+    border-radius: 999px; padding: 4px 11px; font-size: 11.5px; font-weight: 600;
+  }
+  .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+  .live.on i { animation: blip 2s ease-in-out infinite; }
+  @keyframes blip { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+  .clock { text-align: right; }
+  .clock b { display: block; font-size: 15px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; }
+  .clock span { display: block; font-size: 11.5px; color: var(--ink-2); line-height: 1.3; }
+
+  /* ---------- shell ---------- */
+  .page { padding: 18px 20px 26px; display: flex; flex-direction: column; gap: 16px; max-width: 1400px; margin: 0 auto; }
+
+  .card { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; box-shadow: var(--sh); }
+  .chead { padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .chead + * { border-top: 1px solid var(--bd-soft); }
+  .chead h2 { margin: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .chead p { margin: 1px 0 0; font-size: 12px; color: var(--ink-2); }
+
+  /* ---------- KPI row ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 14px; }
+  .kpi { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 15px 16px; box-shadow: var(--sh); }
+  .kpi .t { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .kpi .t span { font-size: 12.5px; font-weight: 500; color: var(--ink-2); }
+  .kpi .v { font-size: 27px; font-weight: 700; letter-spacing: -.025em; line-height: 1.3; margin-top: 2px; }
+  .kpi .v u { font-size: 13px; font-weight: 500; text-decoration: none; color: var(--ink-2); margin-left: 3px; }
+  .kpi .c { font-size: 12px; color: var(--ink-3); }
+
+  /* ---------- pills / dots ---------- */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
+    border-radius: 7px; padding: 3px 10px; font-size: 11.5px; font-weight: 600;
+    border: 1px solid;
+  }
+  .pill[data-s="good"] { background: var(--good-wash); color: var(--good-ink); border-color: var(--good-bd) }
+  .pill[data-s="warn"] { background: var(--warn-wash); color: var(--warn-ink); border-color: var(--warn-bd) }
+  .pill[data-s="crit"] { background: var(--crit-wash); color: var(--crit-ink); border-color: var(--crit-bd) }
+  .pill[data-s="off"]  { background: var(--off-wash);  color: var(--off-ink);  border-color: var(--off-bd) }
+  .sdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+  .sdot[data-s="good"] { background: var(--good) } .sdot[data-s="warn"] { background: var(--warn) }
+  .sdot[data-s="crit"] { background: var(--crit) } .sdot[data-s="off"]  { background: var(--off) }
+  .sdot.ring { box-shadow: 0 0 0 3px color-mix(in srgb, var(--crit) 22%, transparent) }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); }
+  .legend i { font-style: normal; display: inline-flex; align-items: center; gap: 6px; }
+
+  /* ---------- main split ---------- */
+  .split { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(280px, 1fr); gap: 16px; align-items: start; }
+
+  /* pen map */
+  .pens { padding: 16px 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .pen { background: var(--card-2); border: 1px solid var(--bd-soft); border-radius: 10px; padding: 13px; }
+  .pen header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .pen header b { font-size: 13px; font-weight: 600; }
+  .pen header em { font-style: normal; font-size: 11.5px; color: var(--ink-3); margin-left: 6px; font-weight: 400; }
+  .tiles { display: flex; flex-wrap: wrap; gap: 9px; }
+  .tile {
+    position: relative; width: 48px; height: 48px; border-radius: 10px; padding: 0;
+    border: 1px solid var(--bd); background: var(--card); cursor: pointer;
+    font-family: var(--f); font-size: 15px; font-weight: 600; color: var(--ink);
+    display: grid; place-items: center; transition: box-shadow .12s, transform .12s;
+  }
+  .tile:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(16,24,40,.09) }
+  .tile[data-s="good"] { border-color: var(--good-bd); background: var(--good-wash); color: var(--good-ink) }
+  .tile[data-s="warn"] { border-color: var(--warn-bd); background: var(--warn-wash); color: var(--warn-ink) }
+  .tile[data-s="crit"] { border-color: var(--crit); background: var(--crit); color: #fff }
+  .tile .bdg {
+    position: absolute; top: -5px; right: -5px; width: 17px; height: 17px; border-radius: 6px;
+    display: grid; place-items: center; font-size: 9px; font-weight: 700;
+    border: 2px solid var(--card);
+  }
+  .tile[data-s="good"] .bdg { background: var(--good); color: #fff }
+  .tile[data-s="warn"] .bdg { background: var(--warn); color: #3A2A05 }
+  .tile[data-s="crit"] .bdg { background: var(--crit); color: #fff }
+  .tile[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--brand) }
+
+  /* pig list */
+  .list { max-height: 420px; overflow-y: auto; }
+  .row {
+    width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+    font-family: var(--f); display: flex; align-items: center; gap: 11px;
+    padding: 11px 18px; border-bottom: 1px solid var(--bd-soft);
+  }
+  .row:last-child { border-bottom: none }
+  .row:hover { background: var(--card-2) }
+  .row[aria-pressed="true"] { background: var(--brand-wash) }
+  .row .nm { flex: 1; min-width: 0 }
+  .row .nm b { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+  .row .nm span { display: block; font-size: 11.5px; color: var(--ink-2); }
+
+  /* ---------- scrubber ---------- */
+  .scrub { padding: 13px 18px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+  .play {
+    font-family: var(--f); font-size: 13px; font-weight: 600; flex-shrink: 0;
+    background: var(--brand); color: #fff; border: none; border-radius: 8px;
+    padding: 9px 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+  }
+  .play:hover { filter: brightness(1.07) }
+  .scrub input[type=range] { flex: 1; min-width: 160px; accent-color: var(--brand); height: 20px; }
+  .scrub .stamp { font-size: 12.5px; color: var(--ink-2); font-weight: 500; flex-shrink: 0; }
+
+  /* ---------- charts ---------- */
+  .cgrid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+  .cgrid .card.wide { grid-column: 1 / -1 }
+  .plot { position: relative; padding: 6px 12px 12px; }
+  .plot svg { display: block; width: 100%; height: auto; }
+  .tip {
+    position: absolute; pointer-events: none; opacity: 0; z-index: 5;
+    background: var(--ink); color: var(--card); border-radius: 7px;
+    padding: 6px 10px; font-size: 11.5px; font-weight: 500; white-space: nowrap;
+    transform: translate(-50%, -128%); transition: opacity .1s;
+  }
+  .tip b { display: block; font-weight: 500; font-size: 10.5px; opacity: .7 }
+
+  /* ---------- table + alerts ---------- */
+  .tscroll { overflow-x: auto }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13px }
+  th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--bd-soft); white-space: nowrap }
+  th { font-size: 11.5px; font-weight: 600; color: var(--ink-2); background: var(--card-2) }
+  tbody tr:last-child td { border-bottom: none }
+  td b { font-weight: 600 }
+  .alog { display: flex; flex-direction: column }
+  .alog .it { display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-bottom: 1px solid var(--bd-soft) }
+  .alog .it:last-child { border-bottom: none }
+  .alog .it .tx { flex: 1; min-width: 0 }
+  .alog .it .tx b { display: block; font-size: 13px; font-weight: 600 }
+  .alog .it .tx span { display: block; font-size: 11.5px; color: var(--ink-2) }
+  .alog .it time { font-size: 11.5px; color: var(--ink-3); flex-shrink: 0 }
+  .empty { padding: 34px 18px; text-align: center; color: var(--ink-3); font-size: 13px }
+
+  /* ---------- the other pages behind the nav ---------- */
+  /* a hidden panel stays hidden even when a display class says otherwise */
+  [hidden] { display: none !important }
+  .stack { display: flex; flex-direction: column; gap: 16px }
+  .tiles4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px }
+
+  .btn {
+    font-family: var(--f); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    background: var(--card); color: var(--ink-2); border: 1px solid var(--bd); border-radius: 8px; padding: 8px 13px;
+  }
+  .btn:hover { background: var(--card-2); color: var(--ink) }
+  .btn.pri { background: var(--brand); border-color: var(--brand); color: #fff }
+  .btn.pri:hover { filter: brightness(1.07); color: #fff }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap }
+  .link {
+    background: none; border: none; padding: 0; cursor: pointer;
+    font-family: var(--f); font-size: 12.5px; font-weight: 600; color: var(--brand);
+  }
+  .link:hover { text-decoration: underline }
+  .note { padding: 0 18px 15px; margin: 0; font-size: 12px; color: var(--ink-3); line-height: 1.6 }
+
+  /* label-over-value grid, for the farm profile */
+  .dl { padding: 15px 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(175px,1fr)); gap: 15px }
+  .dl div span { display: block; font-size: 11.5px; color: var(--ink-2) }
+  .dl div b { display: block; font-size: 13.5px; font-weight: 600; margin-top: 1px }
+
+  /* battery + signal cells in the device table */
+  .bcell { display: inline-flex; align-items: center; gap: 8px }
+  .bcell em { font-style: normal; font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums }
+  .bbar { width: 52px; height: 6px; border-radius: 99px; background: var(--bd); overflow: hidden; flex-shrink: 0 }
+  .bbar i { display: block; height: 100%; border-radius: 99px }
+  .sig { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px }
+  .sig i { display: block; width: 3px; border-radius: 2px; background: var(--brand) }
+
+  /* status counts inside a cell */
+  .mix { display: inline-flex; align-items: center; gap: 11px; font-variant-numeric: tabular-nums }
+  .mix span { display: inline-flex; align-items: center; gap: 5px }
+
+  /* settings forms */
+  .form { padding: 15px 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 14px }
+  .field { display: flex; flex-direction: column; gap: 5px; min-width: 0 }
+  .field label { font-size: 12px; font-weight: 500; color: var(--ink-2) }
+  .field input, .field select {
+    font-family: var(--f); font-size: 13px; color: var(--ink); background: var(--card);
+    border: 1px solid var(--bd); border-radius: 8px; padding: 8px 10px; width: 100%; box-sizing: border-box;
+  }
+  .field small { font-size: 11px; color: var(--ink-3) }
+  .checks { padding: 15px 18px; display: flex; flex-direction: column; gap: 12px }
+  .check { display: flex; align-items: flex-start; gap: 10px }
+  .check input { accent-color: var(--brand); width: 16px; height: 16px; margin: 2px 0 0; flex-shrink: 0 }
+  .check b { display: block; font-size: 13px; font-weight: 600 }
+  .check span { display: block; font-size: 12px; color: var(--ink-2) }
+  .quar { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--bd-soft) }
+  .quar:last-child { border-bottom: none }
+  .quar .tx { flex: 1; min-width: 0 }
+  .quar .tx b { display: block; font-size: 13px; font-weight: 600 }
+  .quar .tx span { display: block; font-size: 11.5px; color: var(--ink-2) }
+
+  @media (max-width: 1080px) { .tiles4 { grid-template-columns: repeat(2, minmax(0,1fr)) } }
+  @media (max-width: 560px) { .tiles4 { grid-template-columns: 1fr } }
+  @media print {
+    .bar, .scrub, .foot, .btns, .link { display: none !important }
+    .card { break-inside: avoid; box-shadow: none }
+  }
+
+  /* ---------- footer ---------- */
+  .foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    padding: 13px 4px 0; border-top: 1px solid var(--bd); font-size: 12px; color: var(--ink-3);
+  }
+  .foot .rt { display: flex; gap: 16px; flex-wrap: wrap }
+  .disc { font-size: 12px; color: var(--ink-2); line-height: 1.65; max-width: 62ch }
+  .disc b { color: var(--ink); font-weight: 600 }
+
+  @media (max-width: 1080px) { .kpis { grid-template-columns: repeat(3, minmax(0,1fr)) } .split { grid-template-columns: 1fr } .list { max-height: 330px } }
+  @media (max-width: 720px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0,1fr)) }
+    .cgrid { grid-template-columns: 1fr }
+    .bar { gap: 12px } .barR { width: 100%; margin-left: 0; justify-content: space-between }
+    .tabs { order: 3; width: 100%; border-top: 1px solid var(--bd-soft) }
+    .tab { padding: 10px 12px }
+  }
+</style>
+
+<div class="bar">
+  <div class="logo">
+    <span class="sq">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>
+      </svg>
+    </span>
+    <span>
+      <b>Swine Seeker</b>
+      <span>ລະບົບປ້າຍຕິດຫູ</span>
+    </span>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-ov" aria-selected="true" aria-controls="v-ov">ພາບລວມ</button>
+    <button class="tab" role="tab" id="tab-pg" aria-selected="false" aria-controls="v-pg">ໝູທັງໝົດ</button>
+    <button class="tab" role="tab" id="tab-al" aria-selected="false" aria-controls="v-al">ແຈ້ງເຕືອນ <span class="dot" id="tabDot" hidden></span></button>
+    <button class="tab" role="tab" id="tab-fm" aria-selected="false" aria-controls="v-fm">ຄອກ &amp; ຟາມ</button>
+    <button class="tab" role="tab" id="tab-tg" aria-selected="false" aria-controls="v-tg">ອຸປະກອນ</button>
+    <button class="tab" role="tab" id="tab-rp" aria-selected="false" aria-controls="v-rp">ລາຍງານ</button>
+    <button class="tab" role="tab" id="tab-st" aria-selected="false" aria-controls="v-st">ຕັ້ງຄ່າ</button>
+  </div>
+  <div class="barR">
+    <span class="live on" id="live"><i></i> ສົດ</span>
+    <span class="clock"><b class="num" id="clkT">—</b><span id="clkD">—</span></span>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="kpis" id="kpis"></div>
+
+  <div id="v-ov" role="tabpanel" aria-labelledby="tab-ov" style="display:flex;flex-direction:column;gap:16px">
+    <div class="split">
+      <section class="card">
+        <div class="chead">
+          <div>
+            <h2>ແຜນຜັງຄອກ <em style="font-style:normal;font-weight:400;color:var(--ink-3);font-size:12px">· 15 ໂຕ</em></h2>
+            <p>ແຕະໝູໜຶ່ງໂຕ ເພື່ອເບິ່ງ 3 ມື້ຫຼັງສຸດ</p>
+          </div>
+          <div class="legend">
+            <i><span class="sdot" data-s="good"></span>ປົກກະຕິ</i>
+            <i><span class="sdot" data-s="warn"></span>ຄວນເບິ່ງແຍງ</i>
+            <i><span class="sdot" data-s="crit"></span>ຕ້ອງກວດດ່ວນ</i>
+          </div>
+        </div>
+        <div class="pens" id="pens"></div>
+      </section>
+
+      <section class="card">
+        <div class="chead">
+          <div><h2>ລາຍການໝູ</h2><p id="listSub">15 ໂຕ</p></div>
+        </div>
+        <div class="list" id="list"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <div class="scrub">
+        <button class="play" id="play">▶ ຫຼິ້ນຄືນ 3 ມື້</button>
+        <input type="range" id="scrub" min="0" max="143" value="143" step="1" aria-label="ເລື່ອນເວລາ">
+        <span class="stamp num" id="stamp">—</span>
+      </div>
+    </section>
+
+    <div class="cgrid" id="charts"></div>
+  </div>
+
+  <div id="v-pg" role="tabpanel" aria-labelledby="tab-pg" hidden>
+    <section class="card">
+      <div class="chead">
+        <div><h2>ໝູທັງໝົດ</h2><p>ຄ່າອ່ານລ່າສຸດຈາກປ້າຍຕິດຫູ</p></div>
+        <div class="legend"><i id="tblStamp">—</i></div>
+      </div>
+      <div class="tscroll">
+        <table>
+          <thead><tr>
+            <th>ໝູ</th><th>ຄອກ</th><th>ປ້າຍ</th>
+            <th>ອຸນຫະພູມ °C</th><th>ເຄື່ອນໄຫວ %</th><th>ຫົວໃຈ bpm</th><th>ອົກຊີເຈນ %</th>
+            <th>ແບັດ %</th><th>ສະຖານະ</th>
+          </tr></thead>
+          <tbody id="tbl"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div id="v-al" role="tabpanel" aria-labelledby="tab-al" hidden>
+    <section class="card">
+      <div class="chead">
+        <div><h2>ແຈ້ງເຕືອນ</h2><p>ທຸກຄັ້ງທີ່ສະຖານະຂອງໝູປ່ຽນ ໃນ 3 ມື້ຫຼັງສຸດ</p></div>
+      </div>
+      <div class="alog" id="alog"></div>
+    </section>
+  </div>
+
+  <div id="v-fm" role="tabpanel" aria-labelledby="tab-fm" hidden></div>
+  <div id="v-tg" role="tabpanel" aria-labelledby="tab-tg" hidden></div>
+  <div id="v-rp" role="tabpanel" aria-labelledby="tab-rp" hidden></div>
+  <div id="v-st" role="tabpanel" aria-labelledby="tab-st" hidden></div>
+
+  <p class="disc">
+    <b>ລະບົບນີ້ບໍ່ໄດ້ວິນິດໄສພະຍາດ ASF.</b>
+    ມັນພຽງແຕ່ບອກວ່າໝູໂຕໃດຄວນໄດ້ຮັບການເບິ່ງແຍງກ່ອນໃນມື້ນີ້ — ສັດຕະວະແພດຍັງເປັນຜູ້ຕັດສິນ.
+    ຂໍ້ມູນໃນໜ້ານີ້ເປັນ<b>ຂໍ້ມູນຈຳລອງ</b>ສຳລັບການສາທິດ ຍັງບໍ່ແມ່ນຂໍ້ມູນຈິງຈາກຟາມ.
+  </p>
+
+  <div class="foot">
+    <span>Swine Seeker · ທີມ Leung Mou Mou · ມະຫາວິທະຍາໄລແຫ່ງຊາດລາວ</span>
+    <span class="rt" id="footCounts"></span>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var METRICS = {
+    temp: { lo: "ອຸນຫະພູມ", unit: "°C",  dec: 1, dir: 1,  good: [37.6, 39.3], warn: [39.3, 40.0], min: 37.6, max: 41.6, ticks: [38, 39, 40, 41], crit: 40.0 },
+    act:  { lo: "ການເຄື່ອນໄຫວ", unit: "%", dec: 0, dir: -1, good: [85, 130],   warn: [70, 85],     min: 20,   max: 125,  ticks: [40, 70, 85, 110], crit: 70 },
+    hr:   { lo: "ອັດຕາຫົວໃຈ", unit: "bpm", dec: 0, dir: 1,  good: [55, 90],    warn: [90, 105],    min: 55,   max: 128,  ticks: [60, 80, 100, 120], crit: 105 },
+    spo2: { lo: "ອົກຊີເຈນ", unit: "%", dec: 0, dir: -1, good: [95, 100],   warn: [92, 95],     min: 88,   max: 100,  ticks: [90, 95, 100], crit: 92 }
+  };
+  var LABEL = { good: "ປົກກະຕິ", warn: "ຄວນເບິ່ງແຍງ", crit: "ຕ້ອງກວດດ່ວນ" };
+  var GLYPH = { good: "✓", warn: "▲", crit: "■" };
+  var RANK  = { good: 0, warn: 1, crit: 2 };
+
+  function classify(key, v) {
+    var m = METRICS[key];
+    if (v >= m.good[0] && v <= m.good[1]) return "good";
+    if (v >= m.warn[0] && v <= m.warn[1]) return "warn";
+    return "crit";
+  }
+
+  /* ---------- deterministic simulation ---------- */
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  var N = 144;
+  var PENS = [ { n: 1, ids: [1,2,3] }, { n: 2, ids: [4,5,6] }, { n: 3, ids: [7,8,9,10] }, { n: 4, ids: [11,12,13,14,15] } ];
+  function ramp(h, start, span) {
+    if (h <= start) return 0;
+    var p = Math.min(1, (h - start) / span);
+    return p * p * (3 - 2 * p) * (0.35 + 0.65 * p);
+  }
+  function buildPig(id, pen) {
+    var r = rng(id * 7919 + 13);
+    var base = { temp: 38.45 + r() * 0.3, act: 97 + r() * 8, hr: 70 + r() * 10, spo2: 96.5 + r() * 1.6 };
+    var sick = id === 7, mild = id === 12;
+    var s = { temp: [], act: [], hr: [], spo2: [] };
+    for (var i = 0; i < N; i++) {
+      var h = i / 2, diur = Math.sin((h - 6) / 24 * Math.PI * 2);
+      var t = base.temp + diur * 0.24 + (r() - 0.5) * 0.12;
+      var a = base.act  + diur * 7    + (r() - 0.5) * 6;
+      var b = base.hr   + diur * 3.5  + (r() - 0.5) * 4;
+      var o = base.spo2 + (r() - 0.5) * 0.9;
+      if (sick) {
+        t += ramp(h, 22, 50) * 2.75;
+        a -= ramp(h, 16, 56) * 66;
+        b += ramp(h, 28, 44) * 46;
+        o -= ramp(h, 40, 32) * 5.2;
+      } else if (mild) {
+        var bump = Math.max(0, 1 - Math.pow((h - 40) / 13, 2));
+        t += bump * 0.85; a -= bump * 19; b += bump * 15;
+      }
+      s.temp.push(t); s.act.push(a); s.hr.push(b); s.spo2.push(o);
+    }
+    return { id: id, pen: pen, tag: "TAG-" + String(id).padStart(2, "0"), batt: Math.round(72 + r() * 26), series: s, base: base };
+  }
+  var HERD = [], byId = {};
+  PENS.forEach(function (p) { p.ids.forEach(function (id) { HERD.push(buildPig(id, p.n)); }); });
+  HERD.sort(function (a, b) { return a.id - b.id; });
+  HERD.forEach(function (p) { byId[p.id] = p; });
+
+  function readAt(p, i) { return { temp: p.series.temp[i], act: p.series.act[i], hr: p.series.hr[i], spo2: p.series.spo2[i] }; }
+  /* Flag on any single critical vital, or on two or more vitals leaving normal at
+     once. Two weak signals together beat one strong one - that is the lead time. */
+  function statusAt(p, i) {
+    var v = readAt(p, i), worst = 0, off = 0;
+    for (var k in v) { var c = classify(k, v[k]); if (RANK[c] > worst) worst = RANK[c]; if (c !== "good") off++; }
+    if (worst === 2 || off >= 2) return "crit";
+    return worst === 1 ? "warn" : "good";
+  }
+  function firstFlag(p) {
+    var run = 0;
+    for (var i = 0; i < N; i++) { if (statusAt(p, i) !== "good") { if (++run === 3) return i - 2; } else run = 0; }
+    return -1;
+  }
+  function firstVisible(p) {
+    for (var i = 0; i < N; i++) if (p.series.temp[i] >= 40.5 && p.series.act[i] <= 55) return i;
+    return -1;
+  }
+  var CASE = byId[7], FLAG_I = firstFlag(CASE), VIS_I = firstVisible(CASE);
+  var LEAD_H = (VIS_I > 0 && FLAG_I >= 0) ? Math.round((VIS_I - FLAG_I) / 2) : 0;
+
+  // status-change log, derived from the series rather than authored
+  var EVENTS = [];
+  HERD.forEach(function (p) {
+    var prev = statusAt(p, 0);
+    for (var i = 1; i < N; i++) {
+      var s = statusAt(p, i);
+      if (s !== prev) { EVENTS.push({ i: i, id: p.id, pen: p.pen, from: prev, to: s }); prev = s; }
+    }
+  });
+  EVENTS.sort(function (a, b) { return a.i - b.i; });
+
+  var state = { now: N - 1, sel: 7, playing: false, tab: "ov" };
+  var $ = function (id) { return document.getElementById(id); };
+  function el(t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; }
+  function fmt(k, v) { return v.toFixed(METRICS[k].dec); }
+  function clock(i) {
+    var mins = i * 30;
+    return { d: Math.floor(mins / 1440) + 1,
+             t: String(Math.floor(mins % 1440 / 60)).padStart(2, "0") + ":" + (mins % 60 === 0 ? "00" : "30") };
+  }
+  /* Icons are built with DOM calls, never as markup strings: a literal SVG tag
+     inside an inline script can terminate the <script> element when the page is
+     re-parsed, which dumps the source onto the page. */
+  var NS = "http://www.w3.org/2000/svg";
+  function s(t, a) { var n = document.createElementNS(NS, t); for (var k in a) n.setAttribute(k, a[k]); return n; }
+  var ICON = {
+    herd:  [["path", { d: "M3 13c0-3.9 3.6-7 8-7s8 3.1 8 7v5H3z" }],
+            ["circle", { cx: 9, cy: 12, r: 1 }], ["circle", { cx: 15, cy: 12, r: 1 }]],
+    tag:   [["circle", { cx: 12, cy: 12, r: 3 }], ["circle", { cx: 12, cy: 12, r: 8 }]],
+    alert: [["path", { d: "M12 3 2 20h20z" }], ["path", { d: "M12 10v4" }], ["path", { d: "M12 17h.01" }]],
+    temp:  [["path", { d: "M10 14V5a2 2 0 1 1 4 0v9a4 4 0 1 1-4 0z" }]],
+    up:    [["path", { d: "M12 19V5" }], ["path", { d: "m5 12 7-7 7 7" }]],
+    batt:  [["rect", { x: 2, y: 7, width: 16, height: 10, rx: 2 }], ["path", { d: "M22 11v2" }]],
+    farm:  [["path", { d: "M3 10.5 12 4l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" }],
+            ["path", { d: "M9 21v-6h6v6" }]],
+    chip:  [["rect", { x: 7, y: 7, width: 10, height: 10, rx: 2 }],
+            ["path", { d: "M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3" }]],
+    report:[["path", { d: "M3 20h18" }], ["path", { d: "M6 20v-7" }],
+            ["path", { d: "M12 20V5" }], ["path", { d: "M18 20v-10" }]],
+    gear:  [["circle", { cx: 12, cy: 12, r: 3.2 }],
+            ["path", { d: "M12 2.6v2.1M12 19.3v2.1M21.4 12h-2.1M4.7 12H2.6M18.6 5.4l-1.5 1.5M6.9 17.1l-1.5 1.5M18.6 18.6l-1.5-1.5M6.9 6.9 5.4 5.4" }]]
+  };
+  function icon(spec) {
+    var g = s("svg", { width: 17, height: 17, viewBox: "0 0 24 24", fill: "none",
+      stroke: "currentColor", "stroke-width": 1.9, "stroke-linecap": "round",
+      "stroke-linejoin": "round", "aria-hidden": "true" });
+    spec.forEach(function (sh) { g.appendChild(s(sh[0], sh[1])); });
+    return g;
+  }
+
+  /* ---------- small builders shared by every page ---------- */
+  function tileEl(t) {
+    var d = el("div", "kpi");
+    var top = el("div", "t");
+    top.appendChild(el("span", null, t.k));
+    if (t.ic) { var i2 = el("span"); i2.appendChild(icon(t.ic)); i2.style.color = t.col || "var(--ink)"; i2.style.display = "flex"; top.appendChild(i2); }
+    d.appendChild(top);
+    var v = el("div", "v num"); v.style.color = t.col || "var(--ink)";
+    v.appendChild(document.createTextNode(t.v));
+    if (t.u) { var u = document.createElement("u"); u.textContent = t.u; v.appendChild(u); }
+    d.appendChild(v);
+    d.appendChild(el("div", "c", t.c));
+    return d;
+  }
+  function tileRow(tiles, cls) {
+    var row = el("div", cls || "tiles4");
+    tiles.forEach(function (t) { row.appendChild(tileEl(t)); });
+    return row;
+  }
+  function cardEl(title, sub, right) {
+    var c = el("section", "card"), h = el("div", "chead"), L = el("div");
+    L.appendChild(el("h2", null, title));
+    if (sub) L.appendChild(el("p", null, sub));
+    h.appendChild(L);
+    if (right) h.appendChild(right);
+    c.appendChild(h);
+    return c;
+  }
+  function pillEl(st, text) { var n = el("span", "pill", text == null ? LABEL[st] : text); n.dataset.s = st; return n; }
+  function dotEl(st, ring) { var n = el("span", "sdot" + (ring ? " ring" : "")); n.dataset.s = st; return n; }
+  /* a cell is a string, a node, or { t: text, cls: "num" } */
+  function dataTable(cols, rows) {
+    var wrap = el("div", "tscroll"), t = document.createElement("table");
+    var head = document.createElement("thead"), hr = document.createElement("tr");
+    cols.forEach(function (c) { hr.appendChild(el("th", null, c)); });
+    head.appendChild(hr); t.appendChild(head);
+    var body = document.createElement("tbody");
+    rows.forEach(function (r) {
+      var tr = document.createElement("tr");
+      r.forEach(function (cell) {
+        var td;
+        if (cell && cell.nodeType) { td = el("td"); td.appendChild(cell); }
+        else if (cell && typeof cell === "object") td = el("td", cell.cls || null, String(cell.t));
+        else td = el("td", null, cell == null ? "" : String(cell));
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+    t.appendChild(body); wrap.appendChild(t); return wrap;
+  }
+  function btn(label, cls, fn) {
+    var b = el("button", cls || "btn", label); b.type = "button";
+    b.addEventListener("click", fn); return b;
+  }
+  function jumpTo(id) { state.sel = id; selectTab("ov"); render(); }
+
+  /* ---------- KPI row ---------- */
+  function renderKpis() {
+    var i = state.now, c = { good: 0, warn: 0, crit: 0 }, sum = 0, hi = null, lowB = null;
+    HERD.forEach(function (p) {
+      c[statusAt(p, i)]++;
+      sum += p.series.temp[i];
+      if (!hi || p.series.temp[i] > hi.series.temp[i]) hi = p;
+      if (!lowB || p.batt < lowB.batt) lowB = p;
+    });
+    var hiS = classify("temp", hi.series.temp[i]);
+    var tiles = [
+      { k: "ໝູທັງໝົດ", ic: ICON.herd, v: "15", u: "ໂຕ", c: "4 ຄອກ", col: "var(--ink)" },
+      { k: "ປ້າຍອອນລາຍ", ic: ICON.tag, v: "15/15", u: "", c: "ສົ່ງທຸກ 30 ນາທີ", col: "var(--ink)" },
+      { k: "ແຈ້ງເຕືອນ", ic: ICON.alert, v: String(c.crit + c.warn), u: "", c: c.crit + " ໂຕຕ້ອງກວດດ່ວນ",
+        col: (c.crit ? "var(--crit-ink)" : c.warn ? "var(--warn-ink)" : "var(--good-ink)") },
+      { k: "ອຸນຫະພູມສະເລ່ຍ", ic: ICON.temp, v: (sum / 15).toFixed(1), u: "°C", c: "ຄ່າສະເລ່ຍທັງຝູງ", col: "var(--ink)" },
+      { k: "ອຸນຫະພູມສູງສຸດ", ic: ICON.up, v: hi.series.temp[i].toFixed(1), u: "°C",
+        c: "ເບີ " + hi.id + " — " + LABEL[hiS], col: (hiS === "good" ? "var(--ink)" : "var(--" + hiS + "-ink)") },
+      { k: "ແບັດເຕີຣີຕ່ຳສຸດ", ic: ICON.batt, v: String(lowB.batt), u: "%", c: lowB.tag, col: "var(--ink)" }
+    ];
+    var host = $("kpis"); host.textContent = "";
+    tiles.forEach(function (t) { host.appendChild(tileEl(t)); });
+    return c;
+  }
+
+  /* ---------- pen map + list ---------- */
+  function renderPens() {
+    var host = $("pens"); host.textContent = "";
+    PENS.forEach(function (pen) {
+      var w = el("div", "pen"), h = document.createElement("header");
+      var worst = "good";
+      pen.ids.forEach(function (id) { var s = statusAt(byId[id], state.now); if (RANK[s] > RANK[worst]) worst = s; });
+      var lab = el("div");
+      lab.appendChild(el("b", null, "ຄອກ " + pen.n));
+      lab.appendChild(el("em", null, pen.ids.length + " ໂຕ"));
+      h.appendChild(lab);
+      var pill = el("span", "pill"); pill.dataset.s = worst;
+      pill.appendChild(el("span", "sdot", "")).dataset.s = worst;
+      pill.appendChild(document.createTextNode(LABEL[worst]));
+      h.appendChild(pill);
+      w.appendChild(h);
+      var tiles = el("div", "tiles");
+      pen.ids.forEach(function (id) {
+        var p = byId[id], s = statusAt(p, state.now);
+        var b = el("button", "tile", String(id));
+        b.dataset.s = s;
+        b.setAttribute("aria-pressed", String(state.sel === id));
+        b.setAttribute("aria-label", "ໝູເບີ " + id + " ຄອກ " + p.pen + " — " + LABEL[s]);
+        b.appendChild(el("span", "bdg", GLYPH[s]));
+        b.addEventListener("click", function () { state.sel = id; render(); });
+        tiles.appendChild(b);
+      });
+      w.appendChild(tiles);
+      host.appendChild(w);
+    });
+  }
+
+  function renderList() {
+    var host = $("list"); host.textContent = "";
+    var order = HERD.slice().sort(function (a, b) {
+      var d = RANK[statusAt(b, state.now)] - RANK[statusAt(a, state.now)];
+      return d !== 0 ? d : a.id - b.id;
+    });
+    order.forEach(function (p) {
+      var s = statusAt(p, state.now);
+      var b = el("button", "row");
+      b.setAttribute("aria-pressed", String(state.sel === p.id));
+      var dot = el("span", "sdot" + (s === "crit" ? " ring" : "")); dot.dataset.s = s;
+      b.appendChild(dot);
+      var nm = el("div", "nm");
+      nm.appendChild(el("b", null, "ເບີ " + p.id + " · ຄອກ " + p.pen));
+      nm.appendChild(el("span", null, p.tag + " · " + fmt("temp", p.series.temp[state.now]) + "°C · ແບັດ " + p.batt + "%"));
+      b.appendChild(nm);
+      var pill = el("span", "pill", LABEL[s]); pill.dataset.s = s;
+      b.appendChild(pill);
+      b.addEventListener("click", function () { state.sel = p.id; render(); });
+      host.appendChild(b);
+    });
+    var c = { good: 0, warn: 0, crit: 0 };
+    HERD.forEach(function (p) { c[statusAt(p, state.now)]++; });
+    $("listSub").textContent = "15 ໂຕ · " + c.crit + " ດ່ວນ · " + c.warn + " ເຝົ້າລະວັງ";
+  }
+
+  /* ---------- charts ---------- */
+  var uid = 0;
+
+  function chart(key, pig, hero) {
+    // each chart carries its own viewBox aspect so it scales uniformly to a sane height
+    var W = hero ? 1280 : 620, H = hero ? 300 : 250;
+    var PL = 44, PR = 18, PT = 14, PB = 28;
+    var m = METRICS[key], pw = W - PL - PR, ph = H - PT - PB;
+    var X = function (i) { return PL + i / (N - 1) * pw; };
+    var Y = function (v) { return PT + (1 - (Math.max(m.min, Math.min(m.max, v)) - m.min) / (m.max - m.min)) * ph; };
+    var cur = pig.series[key][state.now], st = classify(key, cur);
+    var tone = st === "good" ? "good" : st;
+
+    var card = el("section", "card" + (hero ? " wide" : ""));
+    var head = el("div", "chead");
+    var L = el("div");
+    var h2 = el("h2", null, m.lo + " — ເບີ " + pig.id);
+    L.appendChild(h2);
+    L.appendChild(el("p", null, "ເສັ້ນອັນຕະລາຍ: " + m.crit.toFixed(m.dec) + " " + m.unit));
+    head.appendChild(L);
+    var R = el("div"); R.style.textAlign = "right";
+    var big = el("div", "num");
+    big.style.cssText = "font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.25;color:var(--" + tone + "-ink)";
+    big.textContent = fmt(key, cur) + " " + m.unit;
+    R.appendChild(big);
+    var pl = el("span", "pill", LABEL[st]); pl.dataset.s = st;
+    R.appendChild(pl);
+    head.appendChild(R);
+    card.appendChild(head);
+
+    var wrap = el("div", "plot");
+    var svg = s("svg", { viewBox: "0 0 " + W + " " + H, role: "img" });
+    svg.setAttribute("aria-label", m.lo + " ຂອງໝູເບີ " + pig.id + " ໃນ 3 ມື້ຫຼັງສຸດ");
+
+    var gid = "g" + (++uid);
+    var defs = s("defs");
+    var lg = s("linearGradient", { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 });
+    lg.appendChild(s("stop", { offset: "0%",  "stop-color": "var(--" + tone + ")", "stop-opacity": .22 }));
+    lg.appendChild(s("stop", { offset: "100%", "stop-color": "var(--" + tone + ")", "stop-opacity": 0 }));
+    defs.appendChild(lg); svg.appendChild(defs);
+
+    // gridlines + y labels
+    m.ticks.forEach(function (t) {
+      if (t < m.min || t > m.max) return;
+      svg.appendChild(s("line", { x1: PL, x2: PL + pw, y1: Y(t), y2: Y(t), stroke: "var(--grid)", "stroke-width": 1 }));
+      var lb = s("text", { x: PL - 9, y: Y(t) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--ink-3)", "font-family": "var(--f)" });
+      lb.textContent = t; svg.appendChild(lb);
+    });
+    // threshold
+    svg.appendChild(s("line", { x1: PL, x2: PL + pw, y1: Y(m.crit), y2: Y(m.crit),
+      stroke: "var(--crit)", "stroke-width": 1.25, "stroke-dasharray": "4 4", opacity: .65 }));
+
+    // x labels
+    [0, 48, 96, 143].forEach(function (i) {
+      var lb = s("text", { x: X(i), y: H - 8, "text-anchor": i === 0 ? "start" : i === 143 ? "end" : "middle",
+        "font-size": 11, fill: "var(--ink-3)", "font-family": "var(--f)" });
+      lb.textContent = i === 143 ? "ດຽວນີ້" : "ມື້ " + (Math.floor(i / 48) + 1);
+      svg.appendChild(lb);
+    });
+
+    // lead-time band on the hero chart
+    if (hero && pig.id === CASE.id && FLAG_I >= 0 && state.now >= FLAG_I) {
+      var xe = X(Math.min(state.now, VIS_I < 0 ? state.now : VIS_I));
+      svg.appendChild(s("rect", { x: X(FLAG_I), y: PT, width: Math.max(0, xe - X(FLAG_I)), height: ph,
+        fill: "var(--brand)", opacity: .07 }));
+      svg.appendChild(s("line", { x1: X(FLAG_I), x2: X(FLAG_I), y1: PT, y2: PT + ph,
+        stroke: "var(--brand)", "stroke-width": 1.5, "stroke-dasharray": "3 3" }));
+      var t1 = s("text", { x: X(FLAG_I) + 5, y: PT + 12, "font-size": 10.5, fill: "var(--brand)", "font-family": "var(--f)", "font-weight": 600 });
+      t1.textContent = "ລະບົບແຈ້ງເຕືອນ"; svg.appendChild(t1);
+      if (VIS_I >= 0 && state.now >= VIS_I) {
+        svg.appendChild(s("line", { x1: X(VIS_I), x2: X(VIS_I), y1: PT, y2: PT + ph,
+          stroke: "var(--ink-2)", "stroke-width": 1.5, "stroke-dasharray": "3 3" }));
+        var t2 = s("text", { x: X(VIS_I) + 5, y: PT + 12, "font-size": 10.5, fill: "var(--ink-2)", "font-family": "var(--f)", "font-weight": 600 });
+        t2.textContent = "ຕາເຫັນໄດ້"; svg.appendChild(t2);
+        var t3 = s("text", { x: (X(FLAG_I) + X(VIS_I)) / 2, y: PT + 28, "text-anchor": "middle",
+          "font-size": 11, fill: "var(--brand)", "font-family": "var(--f)", "font-weight": 700 });
+        t3.textContent = "ໄວກວ່າ " + LEAD_H + " ຊົ່ວໂມງ"; svg.appendChild(t3);
+      }
+    }
+
+    // area + line
+    var d = "", i;
+    for (i = 0; i <= state.now; i++) d += (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(pig.series[key][i]).toFixed(1);
+    svg.appendChild(s("path", { d: d + "L" + X(state.now).toFixed(1) + " " + (PT + ph) + "L" + PL + " " + (PT + ph) + "Z",
+      fill: "url(#" + gid + ")", stroke: "none" }));
+    svg.appendChild(s("path", { d: d, fill: "none", stroke: "var(--" + tone + ")", "stroke-width": 2,
+      "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+    // endpoint
+    svg.appendChild(s("circle", { cx: X(state.now), cy: Y(cur), r: 4.5,
+      fill: "var(--" + tone + ")", stroke: "var(--card)", "stroke-width": 2 }));
+
+    var cross = s("line", { x1: 0, x2: 0, y1: PT, y2: PT + ph, stroke: "var(--ink-3)", "stroke-width": 1, opacity: 0 });
+    var dot = s("circle", { r: 3.5, fill: "var(--ink)", opacity: 0 });
+    svg.appendChild(cross); svg.appendChild(dot);
+    wrap.appendChild(svg);
+    var tip = el("div", "tip"); wrap.appendChild(tip);
+
+    svg.addEventListener("pointermove", function (e) {
+      var r = svg.getBoundingClientRect();
+      var idx = Math.round(((e.clientX - r.left) / r.width * W - PL) / pw * (N - 1));
+      idx = Math.max(0, Math.min(state.now, idx));
+      var val = pig.series[key][idx], ck = clock(idx);
+      cross.setAttribute("x1", X(idx)); cross.setAttribute("x2", X(idx)); cross.setAttribute("opacity", .45);
+      dot.setAttribute("cx", X(idx)); dot.setAttribute("cy", Y(val)); dot.setAttribute("opacity", 1);
+      tip.textContent = "";
+      tip.appendChild(el("b", null, "ມື້ " + ck.d + " · " + ck.t));
+      tip.appendChild(document.createTextNode(fmt(key, val) + " " + m.unit));
+      tip.style.left = (X(idx) / W * 100) + "%";
+      tip.style.top = (Y(val) / H * r.height) + "px";
+      tip.style.opacity = 1;
+    });
+    svg.addEventListener("pointerleave", function () {
+      cross.setAttribute("opacity", 0); dot.setAttribute("opacity", 0); tip.style.opacity = 0;
+    });
+    card.appendChild(wrap);
+    return card;
+  }
+
+  function renderCharts() {
+    var p = byId[state.sel], host = $("charts");
+    host.textContent = "";
+    host.appendChild(chart("temp", p, true));
+    host.appendChild(chart("act", p, false));
+    host.appendChild(chart("hr", p, false));
+  }
+
+  /* ---------- table + alert log ---------- */
+  function renderTable() {
+    var b = $("tbl"); b.textContent = "";
+    HERD.forEach(function (p) {
+      var v = readAt(p, state.now), st = statusAt(p, state.now), tr = document.createElement("tr");
+      var c1 = el("td"); c1.appendChild(el("b", null, String(p.id))); tr.appendChild(c1);
+      [String(p.pen), p.tag, fmt("temp", v.temp), fmt("act", v.act), fmt("hr", v.hr), fmt("spo2", v.spo2), p.batt + "%"]
+        .forEach(function (x) { tr.appendChild(el("td", "num", x)); });
+      var td = el("td");
+      var pill = el("span", "pill", GLYPH[st] + " " + LABEL[st]); pill.dataset.s = st;
+      td.appendChild(pill); tr.appendChild(td);
+      b.appendChild(tr);
+    });
+    var ck = clock(state.now);
+    $("tblStamp").textContent = "ມື້ " + ck.d + " · " + ck.t;
+  }
+
+  function renderAlerts() {
+    var host = $("alog"); host.textContent = "";
+    var list = EVENTS.filter(function (e) { return e.i <= state.now && e.to !== "good"; }).reverse();
+    $("tabDot").hidden = !list.length;
+    if (!list.length) { host.appendChild(el("div", "empty", "ຍັງບໍ່ມີແຈ້ງເຕືອນ")); return; }
+    list.slice(0, 40).forEach(function (e) {
+      var ck = clock(e.i), it = el("div", "it");
+      var dot = el("span", "sdot" + (e.to === "crit" ? " ring" : "")); dot.dataset.s = e.to;
+      it.appendChild(dot);
+      var tx = el("div", "tx");
+      tx.appendChild(el("b", null, "ໝູເບີ " + e.id + " · ຄອກ " + e.pen));
+      tx.appendChild(el("span", null, LABEL[e.from] + " → " + LABEL[e.to]));
+      it.appendChild(tx);
+      var pill = el("span", "pill", LABEL[e.to]); pill.dataset.s = e.to;
+      it.appendChild(pill);
+      var tm = document.createElement("time"); tm.textContent = "ມື້ " + ck.d + " · " + ck.t;
+      it.appendChild(tm);
+      host.appendChild(it);
+    });
+  }
+
+  /* ---------- page: farm & pens ---------- */
+  var FARM = {
+    name:  "ຟາມໝູ ບ້ານດົງໂດກ",
+    where: "ເມືອງໄຊທານີ · ນະຄອນຫຼວງວຽງຈັນ",
+    owner: "ທ້າວ ສົມສັກ ພົມມະຈັນ · 020 5555 0180",
+    vet:   "ນາງ ຄຳແພງ ສີວົງໄຊ · 020 5555 1234",
+    since: "12 ສິງຫາ 2026"
+  };
+
+  function uval(k, v) { var m = METRICS[k]; return fmt(k, v) + (m.unit === "bpm" ? " " : "") + m.unit; }
+
+  function penStats(pen) {
+    var c = { good: 0, warn: 0, crit: 0 }, t = 0, a = 0, worst = "good", lead = pen.ids[0];
+    pen.ids.forEach(function (id) {
+      var q = byId[id], st = statusAt(q, state.now);
+      c[st]++; t += q.series.temp[state.now]; a += q.series.act[state.now];
+      if (RANK[st] > RANK[worst]) { worst = st; lead = id; }
+    });
+    return { c: c, temp: t / pen.ids.length, act: a / pen.ids.length, worst: worst, lead: lead };
+  }
+
+  function mixEl(c) {
+    var w = el("span", "mix");
+    ["good", "warn", "crit"].forEach(function (k) {
+      var g = el("span");
+      g.appendChild(dotEl(k));
+      g.appendChild(document.createTextNode(String(c[k])));
+      w.appendChild(g);
+    });
+    return w;
+  }
+
+  // the vitals that are out of range right now, in the farmer's words
+  function offVitals(pig, i) {
+    var v = readAt(pig, i), out = [];
+    for (var k in v) if (classify(k, v[k]) !== "good") out.push(METRICS[k].lo + " " + uval(k, v[k]));
+    return out;
+  }
+
+  function renderFarm() {
+    var host = $("v-fm"); host.textContent = ""; host.className = "stack";
+
+    var c1 = cardEl("ຂໍ້ມູນຟາມ", "ຟາມທີ່ບັນຊີນີ້ກຳລັງເບິ່ງແຍງຢູ່");
+    var dl = el("div", "dl");
+    [["ຊື່ຟາມ", FARM.name], ["ທີ່ຕັ້ງ", FARM.where], ["ເຈົ້າຂອງ", FARM.owner],
+     ["ສັດຕະວະແພດປະຈຳ", FARM.vet], ["ເລີ່ມໃຊ້ລະບົບ", FARM.since],
+     ["ຂະໜາດ", PENS.length + " ຄອກ · " + HERD.length + " ໂຕ"]].forEach(function (r) {
+      var d = el("div");
+      d.appendChild(el("span", null, r[0]));
+      d.appendChild(el("b", null, r[1]));
+      dl.appendChild(d);
+    });
+    c1.appendChild(dl);
+    host.appendChild(c1);
+
+    var ck = clock(state.now);
+    var c2 = cardEl("ຄອກທັງໝົດ", "ຄ່າສະເລ່ຍຂອງແຕ່ລະຄອກ ໃນ ມື້ " + ck.d + " · " + ck.t);
+    var rows = PENS.map(function (pen) {
+      var st = penStats(pen);
+      var go = btn("ເບິ່ງໃນແຜນຜັງ", "link", function () { jumpTo(st.lead); });
+      return ["ຄອກ " + pen.n, { t: pen.ids.length, cls: "num" }, mixEl(st.c),
+              { t: uval("temp", st.temp), cls: "num" }, { t: uval("act", st.act), cls: "num" },
+              pillEl(st.worst), go];
+    });
+    c2.appendChild(dataTable(["ຄອກ", "ຈຳນວນໝູ", "ນັບຕາມສະຖານະ", "ອຸນຫະພູມສະເລ່ຍ", "ເຄື່ອນໄຫວສະເລ່ຍ", "ສະຖານະຄອກ", ""], rows));
+    host.appendChild(c2);
+
+    var crit = HERD.filter(function (q) { return statusAt(q, state.now) === "crit"; });
+    var c3 = cardEl("ຄອກກັກຕົວ", "ໝູທີ່ຄວນແຍກອອກຈາກຝູງ ຈົນກວ່າສັດຕະວະແພດຈະກວດ");
+    if (!crit.length) {
+      c3.appendChild(el("div", "empty", "ບໍ່ມີໝູທີ່ຕ້ອງກັກຕົວໃນຕອນນີ້"));
+    } else {
+      var box = el("div");
+      crit.forEach(function (q) {
+        var it = el("div", "quar");
+        it.appendChild(dotEl("crit", true));
+        var tx = el("div", "tx");
+        tx.appendChild(el("b", null, "ໝູເບີ " + q.id + " · ຄອກ " + q.pen + " · " + q.tag));
+        tx.appendChild(el("span", null, offVitals(q, state.now).join(" · ")));
+        it.appendChild(tx);
+        it.appendChild(btn("ເບິ່ງລາຍລະອຽດ", "link", function () { jumpTo(q.id); }));
+        box.appendChild(it);
+      });
+      c3.appendChild(box);
+    }
+    c3.appendChild(el("p", "note", "ການແຍກຄອກຍັງເຮັດດ້ວຍມືຢູ່ — ໜ້ານີ້ພຽງແຕ່ບອກວ່າໂຕໃດຄວນຖືກແຍກກ່ອນ."));
+    host.appendChild(c3);
+  }
+
+  /* ---------- page: ear tags ---------- */
+  var FW_LATEST = "v1.2.0", TAGINFO = null;
+  function tagInfo() {
+    if (TAGINFO) return TAGINFO;
+    TAGINFO = {};
+    HERD.forEach(function (q) {
+      var r = rng(q.id * 104729 + 7);
+      TAGINFO[q.id] = { rssi: -52 - Math.round(r() * 34), ago: Math.round(r() * 29), fw: r() > 0.78 ? "v1.1.4" : FW_LATEST };
+    });
+    return TAGINFO;
+  }
+  /* A tag's own health, which is not the pig's health: a flat battery says
+     nothing about the animal, but it does mean the next reading may not come. */
+  function tagState(q, t) {
+    if (q.batt <= 20) return { s: "crit", why: "ແບັດເຕີຣີໃກ້ໝົດ — ຕ້ອງປ່ຽນ" };
+    if (t.ago > 60)   return { s: "crit", why: "ຂາດການຕິດຕໍ່" };
+    if (q.batt <= 35) return { s: "warn", why: "ຄວນສາກແບັດໄວໆນີ້" };
+    if (t.rssi <= -80) return { s: "warn", why: "ສັນຍານອ່ອນ" };
+    if (t.fw !== FW_LATEST) return { s: "warn", why: "ມີເຟີມແວໃໝ່" };
+    return { s: "good", why: "ປົກກະຕິ" };
+  }
+  function battEl(v) {
+    var box = el("span", "bcell"), bar = el("span", "bbar"), f = el("i");
+    f.style.width = Math.max(4, Math.min(100, v)) + "%";
+    f.style.background = v <= 20 ? "var(--crit)" : v <= 35 ? "var(--warn)" : "var(--good)";
+    bar.appendChild(f); box.appendChild(bar);
+    box.appendChild(el("em", null, v + "%"));
+    return box;
+  }
+  function sigEl(rssi) {
+    var lvl = rssi > -60 ? 4 : rssi > -70 ? 3 : rssi > -80 ? 2 : 1;
+    var box = el("span", "bcell"), w = el("span", "sig");
+    for (var i = 1; i <= 4; i++) {
+      var b = el("i"); b.style.height = (3 + i * 2.3).toFixed(1) + "px";
+      if (i > lvl) b.style.opacity = ".22";
+      w.appendChild(b);
+    }
+    box.appendChild(w); box.appendChild(el("em", null, rssi + " dBm"));
+    return box;
+  }
+
+  function renderTags() {
+    var host = $("v-tg"); host.textContent = ""; host.className = "stack";
+    var info = tagInfo(), c = { good: 0, warn: 0, crit: 0 }, lowB = null, weak = 0, old = 0;
+    HERD.forEach(function (q) {
+      var t = info[q.id], ts = tagState(q, t);
+      c[ts.s]++;
+      if (!lowB || q.batt < lowB.batt) lowB = q;
+      if (t.rssi <= -80) weak++;
+      if (t.fw !== FW_LATEST) old++;
+    });
+
+    host.appendChild(tileRow([
+      { k: "ປ້າຍທັງໝົດ", ic: ICON.tag, v: String(HERD.length), u: "ອັນ", c: "ຕິດຢູ່ໝູ " + HERD.length + " ໂຕ" },
+      { k: "ສົ່ງຂໍ້ມູນປົກກະຕິ", ic: ICON.chip, v: String(c.good), u: "/" + HERD.length, c: "ສົ່ງທຸກ 30 ນາທີ",
+        col: "var(--good-ink)" },
+      { k: "ຕ້ອງເອົາໃຈໃສ່", ic: ICON.alert, v: String(c.warn + c.crit), u: "ອັນ",
+        c: weak + " ສັນຍານອ່ອນ · " + old + " ລໍຖ້າອັບເດດ",
+        col: (c.crit ? "var(--crit-ink)" : c.warn ? "var(--warn-ink)" : "var(--good-ink)") },
+      { k: "ແບັດເຕີຣີຕ່ຳສຸດ", ic: ICON.batt, v: String(lowB.batt), u: "%", c: lowB.tag + " · ໝູເບີ " + lowB.id }
+    ]));
+
+    var c2 = cardEl("ອຸປະກອນທັງໝົດ", "ສະພາບຂອງປ້າຍແຕ່ລະອັນ ບໍ່ແມ່ນສຸຂະພາບຂອງໝູ");
+    var rows = HERD.map(function (q) {
+      var t = info[q.id], ts = tagState(q, t);
+      var fw = el("span"); fw.textContent = t.fw;
+      if (t.fw !== FW_LATEST) { fw.style.color = "var(--warn-ink)"; fw.title = "ເຟີມແວໃໝ່: " + FW_LATEST; }
+      return [{ t: q.tag, cls: null }, { t: "ເບີ " + q.id, cls: null }, { t: q.pen, cls: "num" },
+              battEl(q.batt), sigEl(t.rssi), { t: t.ago + " ນາທີກ່ອນ", cls: "num" }, fw,
+              pillEl(ts.s, ts.why),
+              btn("ເບິ່ງໝູ", "link", function () { jumpTo(q.id); })];
+    });
+    c2.appendChild(dataTable(["ປ້າຍ", "ໝູ", "ຄອກ", "ແບັດເຕີຣີ", "ສັນຍານ", "ສົ່ງລ່າສຸດ", "ເຟີມແວ", "ສະພາບປ້າຍ", ""], rows));
+    c2.appendChild(el("p", "note", "ການຈົດທະບຽນປ້າຍໃໝ່ ແລະ ການປ່ຽນປ້າຍ ຈະເຮັດໄດ້ເມື່ອເຊື່ອມຕໍ່ກັບເຊີບເວີຂອງຟາມ."));
+    host.appendChild(c2);
+  }
+
+  /* ---------- page: reports ---------- */
+  function pigReport(q) {
+    var maxT = -Infinity, minA = Infinity, off = 0, first = -1;
+    for (var i = 0; i <= state.now; i++) {
+      if (q.series.temp[i] > maxT) maxT = q.series.temp[i];
+      if (q.series.act[i] < minA) minA = q.series.act[i];
+      if (statusAt(q, i) !== "good") { off++; if (first < 0) first = i; }
+    }
+    return { maxT: maxT, minA: minA, hrs: off / 2, first: first, now: statusAt(q, state.now) };
+  }
+  function dayStats() {
+    var days = [];
+    for (var d = 0; d * 48 <= state.now; d++) {
+      var a = d * 48, b = Math.min(state.now, a + 47), sum = 0, n2 = 0, mx = -Infinity, crit = 0, ids = {};
+      EVENTS.forEach(function (e) { if (e.i >= a && e.i <= b && e.to !== "good") ids[e.id] = 1; });
+      var ev = EVENTS.filter(function (e) { return e.i >= a && e.i <= b && e.to !== "good"; }).length;
+      HERD.forEach(function (q) {
+        for (var i = a; i <= b; i++) {
+          sum += q.series.temp[i]; n2++;
+          if (q.series.temp[i] > mx) mx = q.series.temp[i];
+          if (statusAt(q, i) === "crit") crit++;
+        }
+      });
+      days.push({ d: d + 1, ev: ev, pigs: Object.keys(ids).length, avg: sum / n2, mx: mx, crit: crit / 2 });
+    }
+    return days;
+  }
+  function download(name, text) {
+    var blob = new Blob(["\ufeff" + text], { type: "text/csv;charset=utf-8" });
+    var a = el("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  }
+  function reportCsv() {
+    var head = ["pig", "pen", "tag", "max_temp_c", "min_activity_pct", "abnormal_hours", "first_flag", "status"];
+    var lines = [head.join(",")];
+    HERD.forEach(function (q) {
+      var r = pigReport(q), ck = r.first >= 0 ? clock(r.first) : null;
+      lines.push([q.id, q.pen, q.tag, r.maxT.toFixed(1), Math.round(r.minA), r.hrs.toFixed(1),
+        ck ? ("day " + ck.d + " " + ck.t) : "-", r.now].join(","));
+    });
+    return lines.join("\n");
+  }
+
+  function renderReport() {
+    var host = $("v-rp"); host.textContent = ""; host.className = "stack";
+    var ck = clock(state.now);
+
+    var acts = el("div", "btns");
+    acts.appendChild(btn("ດຶງອອກເປັນ CSV", "btn pri", function () { download("swine-seeker-report.csv", reportCsv()); }));
+    acts.appendChild(btn("ພິມ / ບັນທຶກ PDF", "btn", function () { window.print(); }));
+    var c1 = cardEl("ລາຍງານ 3 ມື້", "ນັບຮອດ ມື້ " + ck.d + " · " + ck.t, acts);
+    host.appendChild(c1);
+
+    var evs = EVENTS.filter(function (e) { return e.i <= state.now && e.to !== "good"; });
+    var ids = {}; evs.forEach(function (e) { ids[e.id] = 1; });
+    var offH = 0;
+    HERD.forEach(function (q) { offH += pigReport(q).hrs; });
+    host.appendChild(tileRow([
+      { k: "ເຫດການແຈ້ງເຕືອນ", ic: ICON.alert, v: String(evs.length), u: "ຄັ້ງ", c: "ໃນ 3 ມື້ຫຼັງສຸດ",
+        col: evs.length ? "var(--warn-ink)" : "var(--good-ink)" },
+      { k: "ໝູທີ່ຖືກແຈ້ງເຕືອນ", ic: ICON.herd, v: String(Object.keys(ids).length), u: "/" + HERD.length, c: "ຢ່າງໜ້ອຍໜຶ່ງຄັ້ງ" },
+      { k: "ຊົ່ວໂມງຜິດປົກກະຕິ", ic: ICON.temp, v: offH.toFixed(1), u: "ຊມ", c: "ລວມທຸກໂຕ" },
+      { k: "ແຈ້ງກ່ອນຕາເຫັນ", ic: ICON.up, v: String(LEAD_H), u: "ຊມ", c: "ກໍລະນີໝູເບີ " + CASE.id, col: "var(--brand)" }
+    ]));
+
+    var c2 = cardEl("ສະຫຼຸບແຕ່ລະມື້", "ຝູງທັງໝົດ " + HERD.length + " ໂຕ");
+    c2.appendChild(dataTable(["ມື້", "ເຫດການ", "ໝູທີ່ຖືກແຈ້ງເຕືອນ", "ອຸນຫະພູມສະເລ່ຍ", "ອຸນຫະພູມສູງສຸດ", "ຊົ່ວໂມງດ່ວນ"],
+      dayStats().map(function (d) {
+        return ["ມື້ " + d.d, { t: d.ev, cls: "num" }, { t: d.pigs + " ໂຕ", cls: "num" },
+                { t: uval("temp", d.avg), cls: "num" }, { t: uval("temp", d.mx), cls: "num" },
+                { t: d.crit.toFixed(1), cls: "num" }];
+      })));
+    host.appendChild(c2);
+
+    var c3 = cardEl("ສະຫຼຸບແຕ່ລະໂຕ", "ຄ່າສູງສຸດ ແລະ ຕ່ຳສຸດ ຕະຫຼອດ 3 ມື້");
+    var rows = HERD.slice().sort(function (a, b) {
+      var d = RANK[statusAt(b, state.now)] - RANK[statusAt(a, state.now)];
+      return d !== 0 ? d : a.id - b.id;
+    }).map(function (q) {
+      var r = pigReport(q), f = r.first >= 0 ? clock(r.first) : null;
+      return [{ t: "ເບີ " + q.id, cls: null }, { t: q.pen, cls: "num" },
+              { t: uval("temp", r.maxT), cls: "num" }, { t: uval("act", r.minA), cls: "num" },
+              { t: r.hrs.toFixed(1), cls: "num" },
+              f ? "ມື້ " + f.d + " · " + f.t : "—",
+              pillEl(r.now),
+              btn("ເບິ່ງກຣາຟ", "link", function () { jumpTo(q.id); })];
+    });
+    c3.appendChild(dataTable(["ໝູ", "ຄອກ", "ອຸນຫະພູມສູງສຸດ", "ເຄື່ອນໄຫວຕ່ຳສຸດ", "ຊົ່ວໂມງຜິດປົກກະຕິ", "ຖືກແຈ້ງເຕືອນຄັ້ງທຳອິດ", "ສະຖານະຕອນນີ້", ""], rows));
+    c3.appendChild(el("p", "note", "ໄຟລ໌ CSV ໃຊ້ຫົວຕາຕະລາງເປັນພາສາອັງກິດ ເພື່ອໃຫ້ເປີດໄດ້ໃນ Excel ແລະ ໂປຣແກຣມສະຖິຕິ."));
+    host.appendChild(c3);
+  }
+
+  /* ---------- page: settings ---------- */
+  /* The thresholds below are the same numbers classify() reads, so a change here
+     moves every tile, chart and alert on the other pages immediately. */
+  function bounds(key) {
+    var m = METRICS[key];
+    return m.dir === 1 ? { w: m.good[1], c: m.warn[1] } : { w: m.good[0], c: m.warn[0] };
+  }
+  function setBounds(key, w, c) {
+    var m = METRICS[key];
+    if (m.dir === 1) { m.good = [m.good[0], w]; m.warn = [w, c]; }
+    else { m.good = [w, m.good[1]]; m.warn = [c, w]; }
+    m.crit = c;
+  }
+  var THRESH0 = {};
+  for (var mk0 in METRICS) THRESH0[mk0] = bounds(mk0);
+
+  function field(label, node, hint) {
+    var f = el("div", "field"), id = "f" + (++uid);
+    var l = el("label", null, label); l.setAttribute("for", id);
+    node.id = id;
+    f.appendChild(l); f.appendChild(node);
+    if (hint) f.appendChild(el("small", null, hint));
+    return f;
+  }
+  function numInput(v, step) {
+    var i = el("input"); i.type = "number"; i.step = String(step); i.value = String(v);
+    return i;
+  }
+
+  function renderSettings() {
+    var host = $("v-st");
+    if (host.firstChild) return;
+    host.className = "stack";
+
+    /* --- thresholds, wired straight into METRICS --- */
+    var note = el("p", "note");
+    function tell() {
+      var c = { good: 0, warn: 0, crit: 0 };
+      HERD.forEach(function (q) { c[statusAt(q, state.now)]++; });
+      note.textContent = "ດ້ວຍຄ່າເຫຼົ່ານີ້ ຕອນນີ້ມີ " + c.crit + " ໂຕຕ້ອງກວດດ່ວນ ແລະ " + c.warn + " ໂຕຄວນເບິ່ງແຍງ.";
+    }
+    var reset = btn("ຄືນຄ່າເດີມ", "btn", function () {
+      for (var k in THRESH0) { setBounds(k, THRESH0[k].w, THRESH0[k].c); }
+      inputs.forEach(function (o) { var b = bounds(o.key); o.w.value = String(b.w); o.c.value = String(b.c); });
+      render(); tell();
+    });
+    var c1 = cardEl("ຂີດຈຳກັດການແຈ້ງເຕືອນ", "ຄ່າທີ່ລະບົບໃຊ້ຕັດສິນວ່າໝູໂຕໃດຄວນຖືກເບິ່ງ", reset);
+    var form = el("div", "form"), inputs = [];
+    ["temp", "act", "hr", "spo2"].forEach(function (key) {
+      var m = METRICS[key], b = bounds(key), step = m.dec ? 0.1 : 1;
+      var wi = numInput(b.w, step), ci = numInput(b.c, step);
+      var rec = { key: key, w: wi, c: ci };
+      inputs.push(rec);
+      function apply() {
+        var w = parseFloat(wi.value), c = parseFloat(ci.value);
+        var ok = isFinite(w) && isFinite(c) && (m.dir === 1 ? w < c : w > c);
+        if (!ok) { var b2 = bounds(key); wi.value = String(b2.w); ci.value = String(b2.c); return; }
+        setBounds(key, w, c); render(); tell();
+      }
+      wi.addEventListener("change", apply); ci.addEventListener("change", apply);
+      var dirTxt = m.dir === 1 ? "ສູງກວ່າຄ່ານີ້" : "ຕ່ຳກວ່າຄ່ານີ້";
+      form.appendChild(field(m.lo + " — ເລີ່ມເບິ່ງແຍງ (" + m.unit + ")", wi, dirTxt + " = ຄວນເບິ່ງແຍງ"));
+      form.appendChild(field(m.lo + " — ຕ້ອງກວດດ່ວນ (" + m.unit + ")", ci, dirTxt + " = ຕ້ອງກວດດ່ວນ"));
+    });
+    c1.appendChild(form);
+    tell();
+    c1.appendChild(note);
+    host.appendChild(c1);
+
+    /* --- notification channels (needs a server before it does anything) --- */
+    var c2 = cardEl("ຊ່ອງທາງແຈ້ງເຕືອນ", "ລະບົບຈະບອກໃຜ ເມື່ອໝູໂຕໜຶ່ງປ່ຽນສະຖານະ");
+    var checks = el("div", "checks");
+    [["SMS ຫາເບີໂທ", "ສົ່ງທັນທີເມື່ອມີໝູຕ້ອງກວດດ່ວນ", true],
+     ["ແອັບໃນມືຖື", "ແຈ້ງເຕືອນທຸກຄັ້ງທີ່ສະຖານະປ່ຽນ", true],
+     ["ລຳໂພງໃນເລົ້າ", "ດັງສະເພາະກໍລະນີດ່ວນ", false],
+     ["ອີເມວສະຫຼຸບປະຈຳມື້", "ສົ່ງລາຍງານມື້ລະຄັ້ງ ຕອນ 18:00", false]].forEach(function (r) {
+      var row = el("label", "check"), cb = el("input"); cb.type = "checkbox"; cb.checked = r[2];
+      row.appendChild(cb);
+      var tx = el("div");
+      tx.appendChild(el("b", null, r[0]));
+      tx.appendChild(el("span", null, r[1]));
+      row.appendChild(tx);
+      checks.appendChild(row);
+    });
+    c2.appendChild(checks);
+    var f2 = el("div", "form");
+    var phone = el("input"); phone.type = "text"; phone.value = "020 5555 0180";
+    var q1 = el("input"); q1.type = "time"; q1.value = "22:00";
+    var q2 = el("input"); q2.type = "time"; q2.value = "05:00";
+    f2.appendChild(field("ເບີໂທຫຼັກ", phone, "ເບີທີ່ຈະໄດ້ຮັບ SMS"));
+    f2.appendChild(field("ເລີ່ມເວລາງຽບ", q1, "ກໍລະນີດ່ວນຍັງດັງຢູ່"));
+    f2.appendChild(field("ເຊົາເວລາງຽບ", q2, ""));
+    c2.appendChild(f2);
+    c2.appendChild(el("p", "note", "ຊ່ອງທາງເຫຼົ່ານີ້ຈະເຮັດວຽກເມື່ອເຊື່ອມຕໍ່ກັບເຊີບເວີຂອງຟາມ — ໃນໜ້າສາທິດນີ້ຍັງບໍ່ໄດ້ສົ່ງຂໍ້ຄວາມຈິງ."));
+    host.appendChild(c2);
+
+    /* --- display: the theme switch is real --- */
+    var c3 = cardEl("ການສະແດງຜົນ", "ຮູບແບບໜ້າຈໍຂອງເຄື່ອງນີ້");
+    var f3 = el("div", "form");
+    var sel = el("select");
+    [["auto", "ຕາມເຄື່ອງ"], ["light", "ສະຫວ່າງ"], ["dark", "ມືດ"]].forEach(function (o) {
+      var op = el("option", null, o[1]); op.value = o[0]; sel.appendChild(op);
+    });
+    sel.value = document.documentElement.getAttribute("data-theme") || "auto";
+    sel.addEventListener("change", function () {
+      if (sel.value === "auto") document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.setAttribute("data-theme", sel.value);
+    });
+    f3.appendChild(field("ຮູບແບບສີ", sel, "ມີຜົນທັນທີ"));
+    var lang = el("select");
+    [["lo", "ລາວ"], ["en", "English (ໄວໆນີ້)"]].forEach(function (o) {
+      var op = el("option", null, o[1]); op.value = o[0]; op.disabled = o[0] === "en"; lang.appendChild(op);
+    });
+    lang.value = "lo";
+    f3.appendChild(field("ພາສາ", lang, "ຍັງມີແຕ່ພາສາລາວ"));
+    c3.appendChild(f3);
+    host.appendChild(c3);
+
+    /* --- who can see the farm --- */
+    var c4 = cardEl("ຜູ້ໃຊ້ ແລະ ສິດ", "ໃຜເຫັນຟາມນີ້ໄດ້ແດ່");
+    c4.appendChild(dataTable(["ຊື່", "ບົດບາດ", "ເບີໂທ", "ສິດ"], [
+      ["ທ້າວ ສົມສັກ ພົມມະຈັນ", "ເຈົ້າຂອງຟາມ", "020 5555 0180", pillEl("good", "ແກ້ໄຂໄດ້ທັງໝົດ")],
+      ["ນາງ ຄຳແພງ ສີວົງໄຊ", "ສັດຕະວະແພດ", "020 5555 1234", pillEl("good", "ເບິ່ງ + ບັນທຶກການປິ່ນປົວ")],
+      ["ທ້າວ ບຸນມີ", "ຄົນລ້ຽງ", "020 5555 7788", pillEl("off", "ເບິ່ງຢ່າງດຽວ")]
+    ]));
+    c4.appendChild(el("p", "note", "ການເພີ່ມ ຫຼື ລຶບຜູ້ໃຊ້ ຕ້ອງເຮັດຜ່ານເຊີບເວີ — ໜ້ານີ້ສະແດງບັນຊີຕົວຢ່າງ."));
+    host.appendChild(c4);
+  }
+
+  /* ---------- tabs ---------- */
+  var PAGES = { fm: renderFarm, tg: renderTags, rp: renderReport, st: renderSettings };
+  var TABS = ["ov", "pg", "al", "fm", "tg", "rp", "st"];
+
+  function selectTab(k) {
+    state.tab = k;
+    TABS.forEach(function (j) {
+      $("tab-" + j).setAttribute("aria-selected", String(j === k));
+      $("v-" + j).hidden = j !== k;
+    });
+    if (k === "ov") $("v-ov").style.display = "flex";
+    // the KPI strip reads the herd, so it stays out of the way on the other pages
+    $("kpis").style.display = PAGES[k] ? "none" : "";
+    if (PAGES[k]) PAGES[k]();
+    $("tab-" + k).focus();
+  }
+
+  TABS.forEach(function (k) {
+    $("tab-" + k).addEventListener("click", function () { selectTab(k); });
+  });
+  document.querySelector(".tabs").addEventListener("keydown", function (e) {
+    var step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    selectTab(TABS[(TABS.indexOf(state.tab) + step + TABS.length) % TABS.length]);
+  });
+
+  /* ---------- playback ---------- */
+  var timer = null;
+  function stop() {
+    state.playing = false; clearInterval(timer); timer = null;
+    $("play").textContent = "▶ ຫຼິ້ນຄືນ 3 ມື້";
+    $("live").classList.add("on");
+  }
+  $("play").addEventListener("click", function () {
+    if (state.playing) { stop(); render(); return; }
+    state.playing = true;
+    $("play").textContent = "❚❚ ຢຸດ";
+    $("live").classList.remove("on");
+    if (state.now >= N - 1) state.now = 0;
+    var slow = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    timer = setInterval(function () {
+      state.now += slow ? 4 : 2;
+      if (state.now >= N - 1) { state.now = N - 1; stop(); }
+      $("scrub").value = state.now;
+      render();
+    }, slow ? 170 : 60);
+    render();
+  });
+  $("scrub").addEventListener("input", function () {
+    if (state.playing) stop();
+    state.now = +this.value; render();
+  });
+
+  /* ---------- main ---------- */
+  function render() {
+    var c = renderKpis();
+    renderPens(); renderList(); renderCharts(); renderTable(); renderAlerts();
+    if (PAGES[state.tab] && state.tab !== "st") PAGES[state.tab]();
+    var ck = clock(state.now);
+    $("clkT").textContent = ck.t;
+    $("clkD").textContent = "ມື້ທີ " + ck.d + " ຈາກ 3";
+    $("stamp").textContent = "ມື້ " + ck.d + " · " + ck.t;
+    var f = $("footCounts"); f.textContent = "";
+    [["good", c.good], ["warn", c.warn], ["crit", c.crit]].forEach(function (pr) {
+      var sp = el("span"); sp.style.cssText = "display:inline-flex;align-items:center;gap:6px";
+      var d = el("span", "sdot"); d.dataset.s = pr[0];
+      sp.appendChild(d);
+      sp.appendChild(document.createTextNode(pr[1] + " " + LABEL[pr[0]]));
+      f.appendChild(sp);
+    });
+    if (window.claude && window.claude.hot && window.claude.hot.snapshot)
+      window.claude.hot.snapshot({ now: state.now, sel: state.sel, tab: state.tab });
+  }
+  function start(saved) {
+    if (saved && typeof saved.now === "number") { state.now = saved.now; state.sel = saved.sel || 7; }
+    $("scrub").value = state.now;
+    render();
+  }
+  if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(start);
+  else start((window.claude && window.claude.hot && window.claude.hot.data) || {});
+})();
+</script>
