@@ -302,6 +302,39 @@
     .tabs { order: 3; width: 100%; border-top: 1px solid var(--bd-soft) }
     .tab { padding: 10px 12px }
   }
+  /* data legend */
+  .guide { margin-top: 4px }
+  .guide > summary {
+    padding: 14px 18px; cursor: pointer; list-style: none;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .guide > summary::-webkit-details-marker { display: none }
+  .guide > summary h2 { margin: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -.01em }
+  .guide > summary p { margin: 1px 0 0; font-size: 12px; color: var(--ink-2) }
+  .guide > summary .chev { color: var(--ink-3); font-size: 12px; flex-shrink: 0; transition: transform .15s }
+  .guide[open] > summary .chev { transform: rotate(90deg) }
+  .guide > summary:hover { background: var(--card-2); border-radius: 12px }
+  .guide[open] > summary { border-bottom: 1px solid var(--bd-soft); border-radius: 12px 12px 0 0 }
+  .gbody { padding: 2px 18px 16px }
+  .gsec { padding-top: 14px }
+  .gsec h3 {
+    margin: 0 0 7px; font-size: 12px; font-weight: 600; color: var(--ink-2);
+    text-transform: none; letter-spacing: .01em;
+  }
+  .gsec p { margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.65; max-width: 70ch }
+  .gsec p + p { margin-top: 7px }
+  .gsec table { min-width: 520px; font-size: 12.5px }
+  .gsec th, .gsec td { padding: 8px 14px 8px 0; border-bottom: 1px solid var(--bd-soft) }
+  .gsec th:first-child, .gsec td:first-child { padding-left: 0 }
+  .gsec td.num, .gsec th.num { font-variant-numeric: tabular-nums }
+  .gsec tr:last-child td { border-bottom: none }
+  .gl { display: flex; flex-direction: column; gap: 7px; font-size: 12.5px; color: var(--ink-2) }
+  .gl b { color: var(--ink); font-weight: 600 }
+  .gl code {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 11.5px;
+    background: var(--card-2); border: 1px solid var(--bd-soft); border-radius: 4px; padding: 1px 5px;
+  }
+  @media (max-width: 640px) { .gbody { padding: 2px 14px 14px } .guide > summary { padding: 13px 14px } }
 </style>
 </head>
 <body>
@@ -405,6 +438,76 @@
   <div id="v-tg" role="tabpanel" aria-labelledby="tab-tg" hidden></div>
   <div id="v-rp" role="tabpanel" aria-labelledby="tab-rp" hidden></div>
   <div id="v-st" role="tabpanel" aria-labelledby="tab-st" hidden></div>
+
+  <details class="card guide">
+    <summary>
+      <div>
+        <h2>຤ວາມຫມາຍຂອງຂໍ້ມູນ</h2>
+        <p>ແຕມເພືໍອເປິດ — ອທິບາຍທຸກໃນໜໍ້ານີ້</p>
+      </div>
+      <span class="chev" aria-hidden="true">▶</span>
+    </summary>
+
+    <div class="gbody">
+      <div class="gsec">
+        <h3>ປໍ້າຍຕິດຫູວັດຫຍັງ</h3>
+        <div class="tscroll">
+          <table>
+            <thead><tr>
+              <th>ຄໍາ</th><th>ໜົ່ວຍ</th>
+              <th class="num">ປົກກະຕິ</th>
+              <th class="num">ຄວນເບິ່ງແຍງ</th>
+              <th class="num">ຕ້ອງກວດດ່ວນ</th>
+              <th>ເຊັນເຊີ</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><b>ອຸນຫະພູມ</b></td><td>°C</td>
+                  <td class="num">37.6 – 39.3</td><td class="num">39.3 – 40.0</td><td class="num">&gt; 40.0</td><td>LM35</td></tr>
+              <tr><td><b>ການເຄື່ອນໄຫວ</b></td><td>%</td>
+                  <td class="num">&gt; 85</td><td class="num">70 – 85</td><td class="num">&lt; 70</td><td>MPU6050</td></tr>
+              <tr><td><b>ອັດຕາຫົວໃຈ</b></td><td>bpm</td>
+                  <td class="num">55 – 90</td><td class="num">90 – 105</td><td class="num">&gt; 105</td><td>MAX30100</td></tr>
+              <tr><td><b>ອົກຊິເຈນ</b></td><td>%</td>
+                  <td class="num">≥ 95</td><td class="num">92 – 95</td><td class="num">&lt; 92</td><td>MAX30100</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:9px"><b>ການເຄື່ອນໄຫວ</b> ວັດເປັນ % ຂອງຄ່າປົກກະຕິ 7 ມື້ຂອງໝູໂຕນັ້ນເອງ ບໍ່ແມ່ນທຍາບກັບຝູງ — ເພາญແມ່ໝູລູກອ່ອນ ແລະ ໝູຂຸນ ມີການເຄື່ອນໄຫວປົກກະຕິຕ່າງກັນ. 100% ແມ່ນປົກກະຕິຂອງມັນເອງ.</p>
+      </div>
+
+      <div class="gsec">
+        <h3>ກົດການແຈ້ງເຕືອນ</h3>
+        <p>ໝູຖືກແຈ້ງເຕືອນເມື່ອ <b>ຄ່າໃດໜຶ່ງເຂົ້າເຂດ “ຕ້ອງກວດດ່ວນ”</b> ຫຼື <b>ສອງຄ່າຂຶ້ນໄປອອກນອກເຂດ “ປົກກະຕິ” ພ້ອມກັນ</b>. ສອງສັນຍານເບົ່າທີ່ມາພ້ອມກັນ ຊົ່ວຍໃໝ້ເຫັນກ່ອນໜຶ່ງສັນຍານແຂງ.</p>
+        <p>ການແຈ້ງຕ້ອງເກິດຕໍ່ເນື່ອງ <b>3 ຄັ້ງ (90 ນາທີ)</b> ກ່ອນ — ຄ່າອ່ານຜິດເທື່ອດຍວຈະບໍ່ສົ່ງຄົນລ້ຊງໄປທົ່ວຄອກໂດຍບໍ່ຈຳເປັນ.</p>
+      </div>
+
+      <div class="gsec">
+        <h3>ສະຖານະ</h3>
+        <div class="gl">
+          <span><span class="sdot" data-s="good"></span> <b>ປົກກະຕິ</b> — ທຸກຄ່າອຍູ່ໃນເຂດປົກກະຕິ</span>
+          <span><span class="sdot" data-s="warn"></span> <b>ຄວນເບິ່ງແຍງ</b> — ມີຄ່າອອກນອກເຂດ ແຕ່ຍັງບໍ່ຫັບ</span>
+          <span><span class="sdot" data-s="crit"></span> <b>ຕ້ອງກວດດ່ວນ</b> — ໄປເບິ່ງໂຕນີ້ກ່ອນໃນມື້ນີ້</span>
+        </div>
+      </div>
+
+      <div class="gsec">
+        <h3>ຄຳສັບໃນໜ້ານີ້</h3>
+        <div class="gl">
+          <span><code>ເບີ 7</code> ໝູເບີ 7 — ເບີຂອງສັດ, ບໍ່ແມ່ນເບີປໍ້າຍ</span>
+          <span><code>ຄອກ 3</code> ຄອກທີ່ໝູໂຕນັ້ນອຍູ່</span>
+          <span><code>TAG-07</code> ເລກປໍ້າຍຕິດຫູ — ຕິດກັບປໍ້າຍ ບໍ່ແມ່ນຕິດກັບໝູ</span>
+          <span><code>ແບັດ 79%</code> ແບັດເຕີຣີຂອງປໍ້າຍ — ບໍ່ແມ່ນຄ່າສຸຂພາບຂອງໝູ</span>
+          <span><code>ສົດ</code> ປໍ້າຍກຳລັງສົ່ງຂໍ້ມູນ — ສົ່ງທຸກ 30 ນາທີ</span>
+        </div>
+      </div>
+
+      <div class="gsec">
+        <h3>ຂໍ້ຄວນລູ້</h3>
+        <p>ໜ້ານີ້ແສດງ <b>15 ໂຕ ໃນ 4 ຄອກ</b> ພ້ອມກັບປະວັດສາດ <b>3 ມື້ (72 ຊົ່ວໂມງ)</b> — ຄ່າອ່ານໜຶ່ງຄັ້ງທຸກ 30 ນາທີ ເທົ່າກັບ 144 ຄັ້ງຕໍ່ໂຕ.</p>
+        <p><b>ອຸນຫະພູມທີ່ວັດໄດ້ແມ່ນອຸນຫະພູມຜິວປໍ້າຍ ບໍ່ແມ່ນອຸນຫະພູມໃນຕົວໝູ.</b> ມັນຂຶ້ນລົງຕາມອຸນຫະພູມໃນເລົ້ານໍຳ. ກ່ອນຈະໃຊ້ເຂດຂ້າງົນໄດ້ແທ້ ຕ້ອງເທີບຄ່າປໍ້າຍກັບອຸນຫະພູມທາງທະວານໜັກກ່ອນ ແລະ ຕ້ອງໄດ້ຣັບການຣັບຣອງຈາກສັດຕະວະແພດ.</p>
+      </div>
+    </div>
+  </details>
 
   <p class="disc">
     <b>ລະບົບນີ້ບໍ່ໄດ້ວິນິດໄສພະຍາດ ASF.</b>
